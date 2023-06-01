@@ -27,7 +27,20 @@ app.post('/write', (req, res) => {
     filePath = `${path.join(folderPath, filename)}.${extension}`,
     options = req.body.options || undefined;
 
-  fs[fsMode](filePath, req.body.responseData, options, (err) => {
+  // 파일이 이미 존재하는 경우
+  /*
+  if (fs.existsSync(filePath) && fsMode === 'writeFile') {
+    console.log("여기에 해당");
+    let existingData = fs.readFileSync(filePath, 'utf-8');
+    if (existingData.trim() !== '') {
+      console.log("여기에 해당");
+      // 이미 행에 데이터가 있는 경우, 다음 행부터 데이터를 입력
+      req.body.responseData = `\n${req.body.responseData}`;
+    }
+  }
+  */
+
+  fs[fsMode](filePath, req.body.responseData, { encoding: 'utf-8', ...options }, (err) => {
     if (err) {
       console.log(err);
       res.send('Error');
